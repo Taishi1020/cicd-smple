@@ -1,0 +1,37 @@
+/**
+ * @jest-environment jsdom
+ */
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Toppage from '.';
+import { expect } from '@playwright/test';
+import { Reporter, Severity } from 'jest-allure/dist/Reporter';
+
+describe('Fancy test', () => {
+  it('Test your amazing feature', async () => {
+    const reporter = new Reporter
+    
+    reporter
+      .description('Feature should work cool')
+
+    reporter.startStep("Check it's fancy");
+    // expect that it's fancy
+    expect(true).toBe(true);
+    reporter.endStep();
+
+    reporter.startStep("Check it's cool");
+    // expect that it's cool
+    expect(true).toBe(true);
+    reporter.endStep();
+
+    const screenshotBuffer = await page.Toppage.screenshot();
+    reporter.addAttachment('Screenshot', screenshotBuffer, 'image/png');
+  });
+});
+
+describe('test', () => {
+  it('should render "hellow" text', () => {
+    render(<Toppage />);
+    expect(screen.getByText('hellow')).toBeTruthy();
+  });
+});
