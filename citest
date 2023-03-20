@@ -25,17 +25,11 @@ jobs:
           node-version: '14'
           cache: npm
 
-      - name: Install Jest
-        run: npm install jest@latest
-
-      - name: Install Jest-Allure
-        run: npm install jest-allure@latest
-
-      - name: Install jest-environment-jsdom
-        run: npm install --save-dev jest-environment-jsdom
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run Jest tests
-        run: npm run jest
+        run: npm run test
 
       - name: Install Playwright
         run: npm install -D playwright
@@ -66,7 +60,7 @@ jobs:
       - name: move StoryBook directory
         run: |
           mkdir -p ./public/storybook
-          mv ./doc/storybook ./public/
+          mv ./storybook-static ./public/storybook
 
       - name: Deploy report to Github Pages
         if: always()
