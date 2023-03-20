@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Create gh-pages-directly
         run: mkdir -p ./public
@@ -20,9 +20,9 @@ jobs:
         run: cp ./doc/index.html ./public/index.html
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '19.4.0'
+          node-version: '14'
           cache: npm
 
       - name: Install Jest
@@ -50,7 +50,7 @@ jobs:
         run: npx allure generate ./allure-results --clean -o ./doc/allure
 
       - name: Upload report
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: allure-results
           path: allure-results
@@ -72,5 +72,5 @@ jobs:
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_DIR: ./public
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
