@@ -1,0 +1,76 @@
+on:
+  push:
+    branches:
+      - feature/environment-building
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v3
+
+      - name: Create gh-pages-directly
+        run: mkdir -p ./public
+
+      - name: Copy File
+        run: cp ./doc/index.html ./public/index.html
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '19.4.0'
+          cache: npm
+
+      - name: Install Jest
+        run: npm install jest@latest
+
+      - name: Install Jest-Allure
+        run: npm install jest-allure@latest
+
+      - name: Install jest-environment-jsdom
+        run: npm install --save-dev jest-environment-jsdom
+
+      - name: Run Jest tests
+        run: npm run jest
+
+      - name: Install Playwright
+        run: npm install -D playwright
+
+      - name: Install Playwright Allure
+        run: npm install -D allure-playwright
+
+      - name: Run Playwright tests
+        run: npm run playwright-test
+
+      - name: Generate Playwright Allure report
+        run: npx allure generate ./allure-results --clean -o ./doc/allure
+
+      - name: Upload report
+        uses: actions/upload-artifact@master
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: move allure directory
+        run: |
+          mkdir -p ./public/allure
+          mv ./doc/allure ./public/
+
+      - name: StoryBook Build
+        run: npm run build-storybook
+
+      - name: move StoryBook directory
+        run: |
+          mkdir -p ./public/storybook
+          mv ./doc/storybook ./public/
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_DIR: ./public
